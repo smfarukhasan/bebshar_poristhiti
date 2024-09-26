@@ -1,37 +1,21 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:bebshar_poristhiti/drawer/drawer_header.dart';
-import 'package:bebshar_poristhiti/drawer/drawer_list.dart';
-import 'package:bebshar_poristhiti/screens/home_page.dart';
+import 'home_screen.dart'; // Import HomeScreen
 
 void main() {
-  runApp(MyApp());
+  runApp(bebshar_poristhiti());
 }
 
-class MyApp extends StatelessWidget {
+class bebshar_poristhiti extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bebshar Poristhiti',
+      debugShowCheckedModeBanner: false,
+      title: 'bebshar_poristhiti',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Bebshar Poristhiti'),
-        leading: DrawerHeader(),
-      ),
-      body: Center(
-        child: Text('Home Page'),
-      ),
-      drawer: DrawerList(),
+      home: HomeScreen(), // Set HomeScreen as the initial screen
     );
   }
 }
