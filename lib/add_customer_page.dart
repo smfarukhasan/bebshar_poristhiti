@@ -86,21 +86,6 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
           key: _formKey,
           child: Column(
             children: [
-              // Customer name
-              TextFormField(
-                decoration: InputDecoration(labelText: 'ক্রেতার নাম'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'ক্রেতার নাম লিখুন';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _customer['name'] = value!;
-                },
-              ),
-              SizedBox(height: 10),
-
               // Date picker for purchase date
               Row(
                 children: [
@@ -113,6 +98,20 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
                     onPressed: () => _selectDate(context),
                   ),
                 ],
+              ),
+              SizedBox(height: 10),
+              // Customer name
+              TextFormField(
+                decoration: InputDecoration(labelText: 'ক্রেতার নাম'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'ক্রেতার নাম লিখুন';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _customer['name'] = value!;
+                },
               ),
               SizedBox(height: 16),
 

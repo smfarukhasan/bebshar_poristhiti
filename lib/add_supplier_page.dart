@@ -86,21 +86,6 @@ class _AddSuppliersPageState extends State<AddSuppliersPage> {
           key: _formKey,
           child: Column(
             children: [
-              // Customer name
-              TextFormField(
-                decoration: InputDecoration(labelText: 'সাপ্লায়ারের নাম'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'সাপ্লায়ারের নাম লিখুন';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _supplier['name'] = value!;
-                },
-              ),
-              SizedBox(height: 10),
-
               // Date picker for purchase date
               Row(
                 children: [
@@ -113,6 +98,22 @@ class _AddSuppliersPageState extends State<AddSuppliersPage> {
                     onPressed: () => _selectDate(context),
                   ),
                 ],
+              ),
+              SizedBox(height: 10),
+
+
+              // Customer name
+              TextFormField(
+                decoration: InputDecoration(labelText: 'সাপ্লায়ারের নাম'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'সাপ্লায়ারের নাম লিখুন';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _supplier['name'] = value!;
+                },
               ),
               SizedBox(height: 16),
 
