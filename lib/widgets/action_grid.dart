@@ -22,10 +22,10 @@ class ActionGrid extends StatelessWidget {
       children: [
         _buildGridItem(Icons.shopping_bag, 'ক্রয় সমূহ', PurchaseHistoryPage(), Colors.blue),
         _buildGridItem(Icons.shopping_cart, 'বিক্রয় সমূহ', SaleHistoryPage(), Colors.green),
-        _buildGridItem(Icons.store, 'স্টক', StockManagementPage(), Colors.cyan),
-        _buildGridItem(Icons.inventory, 'প্রোডাক্ট', ProductPage(), Colors.brown),
+        _buildGridItem(Icons.note_alt, 'বাকির খাতা', StockManagementPage(), Colors.cyan),  //bakir hisab
+        _buildGridItem(Icons.inventory, 'প্রোডাক্ট স্টক', StockManagementPage(), Colors.brown),
         _buildGridItem(Icons.people, 'সকল পার্টি', ContactManagementPage(), Colors.red),
-        _buildGridItem(Icons.note_alt, 'খরচের হিসাব', PersonalExpensePage(), Colors.teal),
+        _buildGridItem(Icons.note_alt_outlined, 'খরচের হিসাব', PersonalExpensePage(), Colors.teal),
       ],
     );
   }

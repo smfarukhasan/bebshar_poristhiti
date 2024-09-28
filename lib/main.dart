@@ -1,3 +1,4 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,45 +7,69 @@ import 'home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    // Handle initialization error
-    print("Firebase initialization error: $e");
-  }
+  await initializeFirebase(); // Initialize Firebase
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+// Function to initialize Firebase
+Future<void> initializeFirebase() async {
+  await Firebase.initializeApp();
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isDarkTheme = false; // State for dark theme
+
+  // Method to toggle theme
+  void toggleTheme() {
+    setState(() {
+      isDarkTheme = !isDarkTheme;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'My App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: AuthWrapper(), // Auth check
+      theme: isDarkTheme ? ThemeData.dark() : ThemeData.light(),
+      home: AuthWrapper(toggleTheme: toggleTheme, isDarkTheme: isDarkTheme),
     );
   }
 }
 
+// AuthWrapper class to handle authentication state
 class AuthWrapper extends StatelessWidget {
+  final Function toggleTheme;
+  final bool isDarkTheme;
+
+  AuthWrapper({required this.toggleTheme, required this.isDarkTheme});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // Check if the user is logged in or not
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // Show loading indicator while checking
+          return Center(child: CircularProgressIndicator()); // Loading indicator
         } else if (snapshot.hasError) {
-          return Center(child: Text("Something went wrong")); // Handle error case
+          return Center(child: Text("Something went wrong")); // Error message
         } else if (snapshot.hasData) {
-          return HomeScreen(); // If user is logged in, go to HomeScreen
+          // User is logged in
+          return HomeScreen(
+            toggleTheme: toggleTheme,
+            isDarkTheme: isDarkTheme,
+          );
         } else {
-          return LoginScreen(); // If user is not logged in, go to LoginScreen
+          // User is not logged in
+          return LoginScreen(
+            toggleTheme: toggleTheme, // Pass toggleTheme to LoginScreen
+            isDarkTheme: isDarkTheme, // Pass isDarkTheme to LoginScreen
+          );
         }
       },
     );

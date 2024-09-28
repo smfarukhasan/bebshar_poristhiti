@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../home_screen.dart';
+import '../home_screen.dart'; // Import your home screen
 
 class LoginScreen extends StatefulWidget {
+  final Function toggleTheme; // Add the toggleTheme parameter
+  final bool isDarkTheme; // Add the isDarkTheme parameter
+
+  LoginScreen({required this.toggleTheme, required this.isDarkTheme}); // Update the constructor
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -12,13 +16,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
-  final TextEditingController _pinController = TextEditingController();
-  final TextEditingController _confirmPinController = TextEditingController();
-  final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   String _verificationId = '';
   bool _isOtpSent = false;
-  bool _isPinSetup = false;
 
   // Send OTP to the phone number
   Future<void> _sendOtp() async {
@@ -28,13 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
       await _auth.verifyPhoneNumber(
         phoneNumber: '+88$phone', // Assuming Bangladesh's country code
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // Auto-verification (this may vary depending on regions)
+          // Auto-verification
           await _auth.signInWithCredential(credential);
+          _navigateToHomeScreen();
         },
         verificationFailed: (FirebaseAuthException e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Verification failed: ${e.message}')),
-          );
+          _showSnackBar('Verification failed: ${e.message}');
         },
         codeSent: (String verificationId, int? resendToken) {
           setState(() {
@@ -47,13 +46,11 @@ class _LoginScreenState extends State<LoginScreen> {
         },
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid phone number')),
-      );
+      _showSnackBar('Please enter a valid phone number');
     }
   }
 
-  // Verify OTP and allow PIN setup
+  // Verify OTP and navigate to home screen
   Future<void> _verifyOtp() async {
     final String otp = _otpController.text.trim();
     if (_verificationId.isNotEmpty && otp.isNotEmpty) {
@@ -63,36 +60,32 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       try {
         await _auth.signInWithCredential(credential);
-        setState(() {
-          _isPinSetup = true; // Allow user to set PIN after verification
-        });
+        _navigateToHomeScreen();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid OTP')),
-        );
+        _showSnackBar('Invalid OTP');
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter the OTP')),
-      );
+      _showSnackBar('Please enter the OTP');
     }
   }
 
-  // Set and store the PIN securely
-  Future<void> _setPin() async {
-    final String pin = _pinController.text.trim();
-    final String confirmPin = _confirmPinController.text.trim();
+  // Show SnackBar
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
-    if (pin.length == 4 && pin == confirmPin) {
-      // Store the PIN securely
-      await _storage.write(key: 'user_pin', value: pin);
-      await _storage.write(key: 'user_phone', value: _phoneController.text.trim());
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomeScreen()));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('PIN does not match or is not 4 digits')),
-      );
-    }
+  // Navigate to home screen after successful login
+  void _navigateToHomeScreen() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => HomeScreen(
+          toggleTheme: widget.toggleTheme, // Pass the toggleTheme to HomeScreen
+          isDarkTheme: widget.isDarkTheme, // Pass the isDarkTheme state to HomeScreen
+        ),
+      ),
+    );
   }
 
   @override
@@ -109,36 +102,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: InputDecoration(labelText: 'Phone Number'),
                 keyboardType: TextInputType.phone,
               ),
+              SizedBox(height: 16), // Add spacing
               ElevatedButton(
                 onPressed: _sendOtp,
                 child: Text('Send OTP'),
               ),
-            ] else if (!_isPinSetup) ...[
+            ] else ...[
               TextField(
                 controller: _otpController,
                 decoration: InputDecoration(labelText: 'Enter OTP'),
                 keyboardType: TextInputType.number,
               ),
+              SizedBox(height: 16), // Add spacing
               ElevatedButton(
                 onPressed: _verifyOtp,
                 child: Text('Verify OTP'),
-              ),
-            ] else ...[
-              TextField(
-                controller: _pinController,
-                decoration: InputDecoration(labelText: 'Set 4-Digit PIN'),
-                keyboardType: TextInputType.number,
-                obscureText: true,
-              ),
-              TextField(
-                controller: _confirmPinController,
-                decoration: InputDecoration(labelText: 'Confirm 4-Digit PIN'),
-                keyboardType: TextInputType.number,
-                obscureText: true,
-              ),
-              ElevatedButton(
-                onPressed: _setPin,
-                child: Text('Set PIN'),
               ),
             ],
           ],

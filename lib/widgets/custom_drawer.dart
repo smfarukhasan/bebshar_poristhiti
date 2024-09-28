@@ -2,19 +2,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../bill/app_payment.dart';
 import '../requirement/login_screen.dart';
 
 class CustomDrawer extends StatefulWidget {
-  final String name; // User's name to be displayed
-  final String mobile; // User's mobile number to be displayed
-  final Function onNameEdit; // Callback for editing name
-  final Function onImagePick; // Callback for picking image
+  final String name;
+  final String mobile;
+  final Function onNameEdit;
+  final Function onImagePick;
+  final Function toggleTheme; // <-- নতুন পরিবর্তন: থিম টগল করার জন্য ফাংশন
+  final bool isDarkTheme; // <-- নতুন প্যারামিটার যোগ করা ডার্ক থিমের স্টেটের জন্য
 
   CustomDrawer({
     required this.name,
     required this.mobile,
     required this.onNameEdit,
     required this.onImagePick,
+    required this.toggleTheme, // <-- থিম টগল ফাংশন প্যারামিটার যোগ করা
+    required this.isDarkTheme, // <-- নতুন প্যারামিটার যোগ করা
   });
 
   @override
@@ -22,9 +27,9 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  File? _profileImage; // Variable to store selected profile image
-  final ImagePicker _picker = ImagePicker(); // Image picker instance
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase authentication instance
+  File? _profileImage;
+  final ImagePicker _picker = ImagePicker();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -33,92 +38,91 @@ class _CustomDrawerState extends State<CustomDrawer> {
         children: [
           UserAccountsDrawerHeader(
             accountName: GestureDetector(
-              onTap: () => widget.onNameEdit(), // Edit name when tapped
-              child: Text(widget.name, style: TextStyle(fontSize: 20)), // Display user's name
+              onTap: () => widget.onNameEdit(),
+              child: Text(widget.name, style: TextStyle(fontSize: 20)),
             ),
             accountEmail: Text(
-              _auth.currentUser?.email ?? 'Email not available', // Display user's email
+              _auth.currentUser?.email ?? 'Email not available',
               style: TextStyle(fontSize: 16),
             ),
             currentAccountPicture: GestureDetector(
-              onTap: () => widget.onImagePick(), // Pick profile picture when tapped
+              onTap: () => widget.onImagePick(),
               child: CircleAvatar(
                 backgroundImage: _profileImage != null
-                    ? FileImage(_profileImage!) // Display selected profile image
-                    : const AssetImage('assets/icon/icon.png') as ImageProvider, // Default profile image
-                backgroundColor: Colors.grey[200], // Background color for avatar
+                    ? FileImage(_profileImage!)
+                    : const AssetImage('assets/icon/icon.png') as ImageProvider,
+                backgroundColor: Colors.grey[200],
               ),
             ),
             decoration: BoxDecoration(
-              color: Colors.green[400], // Background color for drawer header
+              color: Colors.green[400],
             ),
           ),
-
-          // List items in the drawer for different actions
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
                 _buildDrawerItem(
                   icon: Icons.note_alt_outlined,
-                  text: 'বাকির খাতা', // Option for note-related actions
-                  onTap: () {
-                    // Handle action
-                  },
+                  text: 'প্রোডাক্ট যুক্ত করুন',
+                  onTap: () {},
                 ),
                 _buildDrawerItem(
                   icon: Icons.list_alt_rounded,
-                  text: 'প্রোডাক্ট লিস্ট', // Option for product list
-                  onTap: () {
-                    // Handle action
-                  },
+                  text: 'প্রোডাক্ট লিস্ট',
+                  onTap: () {},
                 ),
                 _buildDrawerItem(
                   icon: Icons.add_shopping_cart,
-                  text: 'ক্রয় রিপোর্ট', // Option for purchase report
-                  onTap: () {
-                    // Handle action
-                  },
+                  text: 'ক্রয় রিপোর্ট',
+                  onTap: () {},
                 ),
                 _buildDrawerItem(
                   icon: Icons.shopping_cart,
-                  text: 'বিক্রয় রিপোর্ট', // Option for sales report
-                  onTap: () {
-                    // Handle action
-                  },
+                  text: 'বিক্রয় রিপোর্ট',
+                  onTap: () {},
                 ),
                 _buildDrawerItem(
                   icon: Icons.payment_rounded,
-                  text: 'বিল পরিশোধ', // Option for bill payments
+                  text: 'বিল পরিশোধ',
                   onTap: () {
-                    // Handle action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AppPaymentPage()), // Navigate to AppPaymentPage
+                    );
                   },
                 ),
+
                 _buildDrawerItem(
-                  icon: Icons.settings,
-                  text: 'সেটিংস', // Option for settings
+                  icon: Icons.settings_applications_sharp,
+                  text: 'থিম পরিবর্তন', // Dark Theme toggle
                   onTap: () {
-                    // Handle action
+                    widget.toggleTheme(); // Call the toggleTheme function
                   },
                 ),
                 _buildDrawerItem(
                   icon: Icons.logout,
-                  text: 'লগ আউট', // Option for logging out
+                  text: 'লগ আউট',
                   onTap: () async {
-                    await _auth.signOut(); // Sign out the user
+                    await _auth.signOut();
                     Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LoginScreen())); // Navigate to login screen
+                      MaterialPageRoute(
+                        builder: (context) => LoginScreen(
+                          toggleTheme: widget.toggleTheme, // toggleTheme প্যারামিটার পাস করা
+                          isDarkTheme: widget.isDarkTheme, // isDarkTheme প্যারামিটার পাস করা
+                        ),
+                      ),
+                    );
                   },
                 ),
+
               ],
             ),
           ),
-
-          // Add your asset image here
           Container(
             width: double.infinity,
             child: Image.asset(
-              'assets/icon/icon.png', // Display logo or image in the drawer footer
+              'assets/icon/icon.png',
               fit: BoxFit.cover,
               height: 300,
             ),
@@ -128,12 +132,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
-  // Method to build drawer list items
   ListTile _buildDrawerItem({required IconData icon, required String text, required Function onTap}) {
     return ListTile(
-      leading: Icon(icon), // Icon for the list item
-      title: Text(text, style: TextStyle(fontSize: 18)), // Text for the list item
-      onTap: () => onTap(), // Action when the list item is tapped
+      leading: Icon(icon),
+      title: Text(text, style: TextStyle(fontSize: 18)),
+      onTap: () => onTap(),
     );
   }
 }
