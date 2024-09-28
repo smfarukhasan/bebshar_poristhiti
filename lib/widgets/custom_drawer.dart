@@ -74,12 +74,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
                 _buildDrawerItem(
                   icon: Icons.add_shopping_cart,
-                  text: 'ক্রয় রিপোর্ট',
+                  text: 'ক্রয় সমূহ',
                   onTap: () {},
                 ),
                 _buildDrawerItem(
                   icon: Icons.shopping_cart,
-                  text: 'বিক্রয় রিপোর্ট',
+                  text: 'লাভ',
                   onTap: () {},
                 ),
                 _buildDrawerItem(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../due/due_collection_page.dart';
 
 class SummaryCardSection extends StatelessWidget {
   final double screenWidth;
@@ -27,7 +28,12 @@ class SummaryCardSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildSummaryItem('মোট বাকির পরিমাণ', '৳ 00.0', false),
-                ElevatedButton(onPressed: () {}, child: Text('বাকি আদায়')),
+                ElevatedButton(onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DueCollectionPage()), // DueCollectionPage() পেজে যাবে
+                  );
+                }, child: Text('বাকি আদায়')),
               ],
             ),
           ],

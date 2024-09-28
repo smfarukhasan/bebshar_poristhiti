@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../due/due_page.dart';
+import '../due/supplier_payment.dart';
 import '../personal_expense.dart';
 import '../product_page.dart';
 import '../sale_history_page.dart';
@@ -20,12 +22,12 @@ class ActionGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       children: [
-        _buildGridItem(Icons.shopping_bag, 'ক্রয় সমূহ', PurchaseHistoryPage(), Colors.blue),
-        _buildGridItem(Icons.shopping_cart, 'বিক্রয় সমূহ', SaleHistoryPage(), Colors.green),
-        _buildGridItem(Icons.note_alt, 'বাকির খাতা', StockManagementPage(), Colors.cyan),  //bakir hisab
+        _buildGridItem(Icons.transfer_within_a_station, 'পার্টি লেনদেন', SupplierPaymentPage(), Colors.blue), //parti lenden
+        _buildGridItem(Icons.shopping_cart_outlined, 'বিক্রয় সমূহ', SaleHistoryPage(), Colors.green),
+        _buildGridItem(Icons.note_alt, 'বাকির খাতা', DuePage(), Colors.cyan),
         _buildGridItem(Icons.inventory, 'প্রোডাক্ট স্টক', StockManagementPage(), Colors.brown),
-        _buildGridItem(Icons.people, 'সকল পার্টি', ContactManagementPage(), Colors.red),
         _buildGridItem(Icons.note_alt_outlined, 'খরচের হিসাব', PersonalExpensePage(), Colors.teal),
+        _buildGridItem(Icons.people, 'সকল পার্টি', ContactManagementPage(), Colors.red),
       ],
     );
   }
