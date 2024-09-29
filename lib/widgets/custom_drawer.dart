@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../bill/app_payment.dart';
+import '../product_management/product.dart';
 import '../requirement/login_screen.dart';
+import '../sales_management/customer_page.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String name;
@@ -11,7 +13,8 @@ class CustomDrawer extends StatefulWidget {
   final Function onNameEdit;
   final Function onImagePick;
   final Function toggleTheme; // <-- নতুন পরিবর্তন: থিম টগল করার জন্য ফাংশন
-  final bool isDarkTheme; // <-- নতুন প্যারামিটার যোগ করা ডার্ক থিমের স্টেটের জন্য
+  final bool
+      isDarkTheme; // <-- নতুন প্যারামিটার যোগ করা ডার্ক থিমের স্টেটের জন্য
 
   CustomDrawer({
     required this.name,
@@ -70,12 +73,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 _buildDrawerItem(
                   icon: Icons.list_alt_rounded,
                   text: 'প্রোডাক্ট লিস্ট',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProductPage()),
+                    );
+                  },
                 ),
                 _buildDrawerItem(
                   icon: Icons.add_shopping_cart,
-                  text: 'ক্রয় সমূহ',
-                  onTap: () {},
+                  text: 'কাস্টমার',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddCustomerPage()),
+                    );
+                  },
                 ),
                 _buildDrawerItem(
                   icon: Icons.shopping_cart,
@@ -88,11 +101,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AppPaymentPage()), // Navigate to AppPaymentPage
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              AppPaymentPage()), // Navigate to AppPaymentPage
                     );
                   },
                 ),
-
                 _buildDrawerItem(
                   icon: Icons.settings_applications_sharp,
                   text: 'থিম পরিবর্তন', // Dark Theme toggle
@@ -108,14 +122,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (context) => LoginScreen(
-                          toggleTheme: widget.toggleTheme, // toggleTheme প্যারামিটার পাস করা
-                          isDarkTheme: widget.isDarkTheme, // isDarkTheme প্যারামিটার পাস করা
+                          toggleTheme: widget
+                              .toggleTheme, // toggleTheme প্যারামিটার পাস করা
+                          isDarkTheme: widget
+                              .isDarkTheme, // isDarkTheme প্যারামিটার পাস করা
                         ),
                       ),
                     );
                   },
                 ),
-
               ],
             ),
           ),
@@ -132,7 +147,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
-  ListTile _buildDrawerItem({required IconData icon, required String text, required Function onTap}) {
+  ListTile _buildDrawerItem(
+      {required IconData icon, required String text, required Function onTap}) {
     return ListTile(
       leading: Icon(icon),
       title: Text(text, style: TextStyle(fontSize: 18)),

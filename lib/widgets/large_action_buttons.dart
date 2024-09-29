@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../add_customer_page.dart';
 import '../add_supplier_page.dart';
+import '../sales_management/customer_page.dart';
+// import '../sales_management/customer_page.dart';
 
 class LargeActionButtons extends StatelessWidget {
   final BuildContext context;
@@ -29,7 +30,7 @@ class LargeActionButtons extends StatelessWidget {
           if (label == 'ক্রয়') {
             Navigator.push(context, MaterialPageRoute(builder: (context) => AddSuppliersPage()));
           } else if (label == 'বিক্রয়') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AddCustomersPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddCustomerPage()));
           }
         },
         child: Card(
